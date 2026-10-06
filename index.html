@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hotel para Pets</title>
+<meta name="description" content="Hospedagem, creche e banho para cães e gatos. Escolha o serviço e peça sua vaga pelo WhatsApp.">
+<meta name="theme-color" content="#173f2f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Marcellus&family=Marcellus+SC&display=swap" rel="stylesheet">
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO DO CLIENTE
+   Edite só este bloco para gerar a prévia de cada lead.
+   Também dá para sobrescrever pela URL, sem editar:
+   index.html?nome=Hotel%20Au%20Au&cidade=Sorocaba&bairro=Centro&whats=15999998888&nota=4,8&avaliacoes=64
+   ===================================================================== */
+const CONFIG = {
+  nome: "Hotel Patinhas",
+  cidade: "Curitiba",
+  bairro: "Água Verde",
+  endereco: "Rua Exemplo, 123 - Água Verde, Curitiba - PR",
+  whatsapp: "5541999999999",          // só números, com 55 + DDD
+  telefoneExibicao: "(41) 99999-9999",
+  instagram: "hotelpatinhas",         // sem @ (deixe "" para esconder)
+  horario: "Seg a sex, 7h às 19h · Sáb, 8h às 13h",
+  notaGoogle: "4,9",
+  totalAvaliacoes: "87",
+  anos: "6",                          // anos de funcionamento (vira "desde 2020" no carimbo)
+
+  // Cada serviço vira um chaveiro no quadro da recepção.
+  // cor: vinho | preto | marfim | mostarda | marinho
+  servicos: [
+    { numero: "01", titulo: "Hospedagem", detalhe: "pequeno porte", preco: "R$ 90 / diária", cor: "vinho" },
+    { numero: "02", titulo: "Hospedagem", detalhe: "médio e grande porte", preco: "R$ 110 / diária", cor: "preto" },
+    { numero: "03", titulo: "Gatil", detalhe: "área separada dos cães", preco: "R$ 80 / diária", cor: "marfim" },
+    { numero: "04", titulo: "Creche", detalhe: "das 7h às 19h", preco: "R$ 60 / dia", cor: "mostarda" },
+    { numero: "05", titulo: "Banho e tosa", detalhe: "higiênica ou completa", preco: "a partir de R$ 55", cor: "marinho" },
+    { numero: "06", titulo: "Leva e traz", detalhe: "busca e entrega em casa", preco: "consulte o bairro", cor: "vinho" }
+  ],
+
+  // Quadro de avisos da recepção (frases curtas, viram letras brancas).
+  avisos: [
+    "Check-in das 7h às 19h",
+    "Vacinas em dia: V8/V10, raiva e gripe",
+    "Primeira vez? Um dia de adaptação",
+    "Traga a ração de casa",
+    "Fotos todo dia no seu WhatsApp",
+    "Gatos em área separada"
+  ],
+
+  // Na prévia completa, troque pelas avaliações reais do Google
+  // e mude depoimentosExemplo para false.
+  depoimentosExemplo: true,
+  depoimentos: [
+    { nome: "Juliana M.", texto: "Deixei a Mel por 10 dias e recebi fotos todo dia. Ela voltou feliz e cansada de tanto brincar." },
+    { nome: "Ricardo S.", texto: "Meu cachorro toma remédio controlado e eles deram tudo certinho no horário." },
+    { nome: "Ana Paula R.", texto: "Lugar limpo, sem cheiro forte e com espaço de verdade para os cães correrem." }
+  ],
+
+  faq: [
+    { p: "Quais vacinas são obrigatórias?", r: "V8 ou V10, antirrábica e gripe canina em dia, além de vermífugo e antipulgas recentes. Pedimos a carteirinha no check-in." },
+    { p: "Meu pet precisa fazer adaptação?", r: "Para a primeira hospedagem, recomendamos um dia de creche antes. Assim ele conhece o espaço e a equipe." },
+    { p: "Posso levar a ração e os brinquedos dele?", r: "Pode e deve. Manter a alimentação de casa evita problemas de estômago. Caminha e brinquedo também ajudam na adaptação." },
+    { p: "Como acompanho meu pet durante a estadia?", r: "Mandamos fotos e vídeos pelo WhatsApp todos os dias. Você também pode chamar a qualquer momento." }
+  ],
+
+  // Fotos do perfil do Google (URLs). Vazio = a seção de fotos não aparece.
+  fotos: [],
+
+  // Faixa de aviso de prévia. Coloque false quando o site for entregue.
+  mostrarAvisoPrevia: true,
+  feitoPor: "Soluções Digitais",
+  feitoPorWhats: "5519982040465"
+};
+
+// Sobrescreve com parâmetros da URL, se houver
+(function () {
+  const q = new URLSearchParams(location.search);
+  const map = { nome: "nome", cidade: "cidade", bairro: "bairro", endereco: "endereco", whats: "whatsapp", tel: "telefoneExibicao", insta: "instagram", nota: "notaGoogle", avaliacoes: "totalAvaliacoes", anos: "anos", horario: "horario" };
+  for (const k in map) if (q.get(k)) CONFIG[map[k]] = q.get(k);
+  if (q.get("previa") === "0") CONFIG.mostrarAvisoPrevia = false;
+})();
+</script>
+
+<style>
+:root {
+  --felt: #1d4a37;
+  --felt-deep: #153a2b;
+  --felt-ink: #ecf2ee;
+  --felt-muted: #c4e2cf;
+  --brass-hi: #f1da92;
+  --brass: #c99c3e;
+  --brass-lo: #7c591b;
+  --brass-ink: #2f220a;
+  --vinho: #8b2b22;
+  --preto: #1c1b19;
+  --marfim: #e8ddc4;
+  --mostarda: #c4951f;
+  --marinho: #20375a;
+  --walnut: #43271a;
+  --walnut-hi: #6a4128;
+  --card: #fcfcf9;
+  --card-ink: #1d2823;
+  --card-muted: #4c5a53;
+  --rule-blue: #b7cde2;
+  --rule-red: #c9473b;
+  --board: #171716;
+  --letter: #f3f3ee;
+  --error: #b3261e;
+
+  --f-plate: "Marcellus SC", "Marcellus", Georgia, serif;
+  --f-head: "Marcellus", Georgia, serif;
+  --f-cond: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "Barlow", system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  /* Latão escovado: ruído esticado na horizontal = riscos de escova */
+  --brass-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='90'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.003 .95' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 .93  0 0 0 0 .75  1.4 0 0 0 -.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
+  /* Nogueira: veio horizontal ondulado */
+  --walnut-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='240'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0025 .28' numOctaves='3' seed='9' stitchTiles='stitch' result='t'/%3E%3CfeTurbulence type='turbulence' baseFrequency='.02 .02' numOctaves='1' seed='3' result='d'/%3E%3CfeDisplacementMap in='t' in2='d' scale='7' xChannelSelector='R' yChannelSelector='G'/%3E%3CfeColorMatrix values='0 0 0 0 .13  0 0 0 0 .07  0 0 0 0 .03  1.8 0 0 0 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  --felt-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scrollbar-color: var(--brass) var(--felt-deep); background: var(--felt-deep); }
+body {
+  margin: 0; min-height: 100vh;
+  color: var(--felt-ink);
+  background-color: var(--felt-deep);
+  background-image: var(--felt-grain), radial-gradient(90% 1400px at 50% 0%, #2a6249 0%, var(--felt) 45%, var(--felt-deep) 100%);
+  background-repeat: repeat, no-repeat;
+  background-blend-mode: soft-light, normal;
+  font: 400 17px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+  caret-color: var(--brass);
+}
+::selection { background: var(--brass-hi); color: var(--brass-ink); }
+:focus-visible { outline: 2px solid var(--brass-hi); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1.12; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--brass); }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+svg.ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Faixa de prévia ---------- */
+.previa { background: #0e271d; color: var(--felt-muted); font: 500 13px/1.4 var(--f-body); padding: 9px 16px; text-align: center; }
+.previa a { color: var(--brass-hi); font-weight: 600; }
+
+/* ---------- Topo ---------- */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+.top-name { font: 400 18px/1 var(--f-plate); color: var(--brass-hi); letter-spacing: .04em; text-decoration: none; }
+.top nav { display: flex; gap: 28px; }
+.top nav a { font: 600 15px/1 var(--f-cond); text-transform: uppercase; letter-spacing: .1em; color: var(--felt-muted); text-decoration: none; padding: 6px 0; }
+.top nav a:hover { color: var(--brass-hi); }
+
+/* ---------- Botão de latão (sino do balcão) ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 24px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 700 17px/1 var(--f-cond); letter-spacing: .06em; text-transform: uppercase; text-decoration: none;
+  color: var(--brass-ink);
+  background: var(--brass-tex), linear-gradient(180deg, var(--brass-hi) 0%, var(--brass) 55%, #c49b45 100%);
+  background-size: 210px 45px, auto; background-blend-mode: soft-light, normal;
+  box-shadow: inset 0 1px 0 rgba(255, 248, 220, .8), inset 0 -2px 0 rgba(80, 55, 10, .35), 0 6px 16px rgba(0, 0, 0, .28);
+  transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), filter .2s;
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.btn:active { transform: translateY(1px); box-shadow: inset 0 2px 4px rgba(80, 55, 10, .4), 0 2px 6px rgba(0, 0, 0, .25); }
+.btn svg { width: 22px; height: 22px; fill: currentColor; stroke: none; }
+.btn-small { min-height: 42px; padding: 0 18px; font-size: 15px; }
+
+/* ---------- Placa de latão ---------- */
+.hero { padding: 24px 0 0; }
+.plate {
+  display: inline-block; position: relative;
+  padding: 18px 34px 16px; border-radius: 6px;
+  background:
+    var(--brass-tex),
+    linear-gradient(100deg, rgba(255, 248, 215, 0) 20%, rgba(255, 248, 215, .35) 38%, rgba(255, 248, 215, 0) 55%),
+    linear-gradient(180deg, #f0d88e 0%, #d9b45e 50%, #c9a04a 100%);
+  background-size: 420px 90px, auto, auto; background-blend-mode: soft-light, normal, normal;
+  box-shadow: inset 0 1px 0 rgba(255, 250, 225, .9), inset 0 -2px 0 rgba(90, 62, 12, .55), inset 0 0 0 1px rgba(90, 62, 12, .35), 0 12px 26px rgba(0, 0, 0, .4), 0 2px 4px rgba(0, 0, 0, .3);
+}
+.plate::before, .plate::after {
+  content: ""; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff3c4, #8a6420 70%);
+  box-shadow: inset 0 0 0 1px rgba(60, 40, 5, .5);
+}
+.plate::before { left: 12px; }
+.plate::after { right: 12px; }
+.plate h1 {
+  font: 400 clamp(30px, 7.4vw, 64px)/1 var(--f-plate); letter-spacing: .03em;
+  /* gravado: letra funda e escura, brilho na borda de baixo do corte */
+  color: #2b1e06; text-shadow: 0 1.5px 0 rgba(255, 238, 180, .75), 0 -1px 0 rgba(30, 20, 2, .55);
+}
+.plate-sub { display: block; margin-top: 8px; font: 600 13px/1.2 var(--f-cond); letter-spacing: .16em; text-transform: uppercase; color: #2f2107; text-shadow: 0 1px 0 rgba(255, 238, 180, .5); text-wrap: balance; }
+
+.lede { margin-top: 28px; max-width: 22ch; font: 400 clamp(28px, 6.6vw, 52px)/1.08 var(--f-head); color: var(--felt-ink); }
+.lede-sub { margin-top: 14px; max-width: 46ch; color: var(--felt-muted); font-size: 18px; }
+
+.rating { display: flex; align-items: center; gap: 14px; margin-top: 22px; color: var(--felt-muted); font-size: 15px; }
+.rating .digits { display: inline-flex; gap: 3px; }
+.rating .digits span {
+  display: grid; place-items: center; min-width: 26px; height: 36px; padding: 0 4px; border-radius: 3px;
+  font: 400 24px/1 var(--f-plate); color: #2b1e06; text-shadow: 0 1px 0 rgba(255, 238, 180, .6);
+  background: var(--brass-tex), linear-gradient(180deg, var(--brass-hi), #d4ad57 60%, #c49b45);
+  background-size: 210px 45px, auto; background-blend-mode: soft-light, normal;
+  box-shadow: inset 0 1px 0 rgba(255, 250, 225, .8), 0 2px 4px rgba(0, 0, 0, .3);
+}
+.rating .digits span.comma { min-width: 0; padding: 0; background: none; box-shadow: none; color: var(--brass-hi); }
+.rating b { color: var(--felt-ink); font-weight: 600; }
+
+/* ---------- Quadro de chaves ---------- */
+/* O quadro: painel de feltro mais escuro numa moldura de nogueira */
+.board-wrap {
+  position: relative; margin: 40px -6px 0; padding: 18px 16px 22px;
+  /* feltro dentro (padding-box), nogueira na moldura (border-box) */
+  background:
+    var(--felt-grain) padding-box,
+    radial-gradient(80% 120% at 50% 0%, rgba(255, 214, 140, .10), transparent 70%) padding-box,
+    linear-gradient(#173f2f, #173f2f) padding-box,
+    var(--walnut-tex) border-box,
+    linear-gradient(180deg, #6a4128, #4a2b1a 50%, #351e13) border-box;
+  background-size: auto, auto, auto, 600px 240px, auto;
+  background-blend-mode: soft-light, normal, normal, normal, normal;
+  border: 10px solid transparent; border-radius: 4px;
+  box-shadow: inset 0 6px 18px rgba(0, 0, 0, .45), 0 16px 30px rgba(0, 0, 0, .35);
+}
+.board-hint {
+  display: inline-block; margin: 0 0 20px 6px; padding: 7px 14px 6px; border-radius: 3px;
+  font: 600 13px/1.1 var(--f-cond); letter-spacing: .1em; text-transform: uppercase; color: #2b1e06;
+  text-shadow: 0 1px 0 rgba(255, 238, 180, .55);
+  background: var(--brass-tex), linear-gradient(180deg, #ecd287, #d4ad57 60%, #c49b45);
+  background-size: 210px 45px, auto; background-blend-mode: soft-light, normal;
+  box-shadow: inset 0 1px 0 rgba(255, 250, 225, .75), inset 0 0 0 1px rgba(90, 62, 12, .3), 0 2px 5px rgba(0, 0, 0, .35);
+}
+.board {
+  position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 10px;
+  padding: 0 0 8px;
+}
+.board::before { /* trilho de latão onde os ganchos ficam */
+  content: ""; position: absolute; left: -4px; right: -4px; top: 6px; height: 6px; border-radius: 3px;
+  background: linear-gradient(180deg, var(--brass-hi), var(--brass) 50%, var(--brass-lo));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .35);
+}
+.board.row2::after { content: ""; position: absolute; left: -4px; right: -4px; top: calc(50% + 2px); height: 6px; border-radius: 3px; background: linear-gradient(180deg, var(--brass-hi), var(--brass) 50%, var(--brass-lo)); box-shadow: 0 3px 6px rgba(0, 0, 0, .35); }
+
+.slot {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  padding: 0 0 6px; border: 0; background: none; color: inherit; cursor: pointer; text-align: center;
+  font: inherit; -webkit-tap-highlight-color: transparent;
+}
+.slot .hook { position: relative; z-index: 4; width: 22px; height: 26px; } /* acima do aro: o gancho passa por dentro dele */
+.fob {
+  position: relative; z-index: 3; width: 58px; height: 118px; margin-top: -8px;
+  transform-origin: 50% 6px;
+  filter: drop-shadow(3px 8px 6px rgba(0, 0, 0, .45));
+  transition: transform .5s var(--ease-out), opacity .35s var(--ease-out), filter .3s;
+}
+.fob svg { width: 100%; height: 100%; overflow: visible; }
+.slot:hover .fob { transform: rotate(-4deg); }
+.slot:active .fob { transform: rotate(3deg) translateY(2px); }
+.slot.settle .fob { animation: settle 1.6s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+@keyframes settle { 0% { transform: rotate(7deg); } 35% { transform: rotate(-4deg); } 65% { transform: rotate(2deg); } 100% { transform: rotate(0); } }
+
+.slot.taken .fob { animation: take .7s var(--ease-out) forwards; }
+@keyframes take {
+  0% { transform: rotate(0); opacity: 1; }
+  35% { transform: rotate(-14deg) translateY(-4px); opacity: 1; }
+  100% { transform: rotate(6deg) translateY(-46px) scale(.9); opacity: 0; }
+}
+.slot .reserved {
+  position: absolute; z-index: 1; top: 26px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+  font: 700 12px/1 var(--f-cond); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+  color: #2a2a26; padding: 9px 8px 8px; margin-top: 4px; border-radius: 2px;
+  background: var(--card); box-shadow: 0 6px 10px rgba(0, 0, 0, .4);
+  transform-origin: 50% -6px;
+  opacity: 0; transition: opacity .4s .25s var(--ease-out);
+}
+.slot .reserved::before { /* barbante do gancho até a etiqueta de papel */
+  content: ""; position: absolute; left: 50%; top: -12px; width: 1px; height: 12px; background: #d9d2bf;
+}
+.slot.taken .reserved { opacity: 1; }
+
+.label {
+  display: flex; flex-direction: column; flex: 1; width: 100%; max-width: 168px; margin-top: 10px; padding: 8px 6px 9px; border-radius: 3px; text-wrap: balance;
+  background: var(--brass-tex), linear-gradient(180deg, #efd68c, #d8b25c 60%, #caa14b);
+  background-size: 210px 45px, auto; background-blend-mode: soft-light, normal;
+  box-shadow: inset 0 1px 0 rgba(255, 250, 225, .75), inset 0 0 0 1px rgba(90, 62, 12, .3), 0 2px 5px rgba(0, 0, 0, .35);
+  color: #261a05; text-shadow: 0 1px 0 rgba(255, 238, 180, .45); transition: box-shadow .25s;
+}
+.label b { display: block; font: 700 15px/1.05 var(--f-cond); letter-spacing: .06em; text-transform: uppercase; }
+.label small { display: block; margin: 2px 0 5px; font: 500 12.5px/1.15 var(--f-body); color: #2f2107; }
+.label em { display: block; margin-top: auto; padding-top: 5px; border-top: 1px solid rgba(60, 40, 5, .35); font: 600 14px/1 var(--f-cond); font-style: normal; letter-spacing: .03em; font-variant-numeric: tabular-nums; }
+.slot.taken .label { box-shadow: inset 0 1px 0 rgba(255, 250, 225, .75), 0 0 0 2px var(--brass-hi), 0 2px 5px rgba(0, 0, 0, .3); }
+
+/* ---------- Balcão (madeira) + ficha ---------- */
+.counter {
+  position: relative; margin-top: 44px; padding: 28px 0 64px;
+  background:
+    var(--walnut-tex),
+    radial-gradient(70% 90% at 50% 20%, rgba(255, 190, 120, .10), transparent 70%),
+    linear-gradient(180deg, var(--walnut-hi) 0, #57331f 18px, #3a2216 100%);
+  background-size: 600px 240px, auto, auto;
+  box-shadow: inset 0 3px 0 rgba(255, 220, 180, .18), inset 0 10px 18px rgba(0, 0, 0, .25);
+}
+.counter::before { /* borda frontal do balcão */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 12px;
+  background: linear-gradient(180deg, #8a5a38, var(--walnut-hi) 40%, var(--walnut));
+  box-shadow: 0 -6px 14px rgba(0, 0, 0, .35);
+}
+
+.ficha {
+  position: relative; max-width: 640px; margin: 0 auto; color: var(--card-ink);
+  background: linear-gradient(180deg, transparent 0 62px, var(--rule-red) 62px 64px, transparent 64px), var(--card);
+  border-radius: 3px; padding: 18px 22px 26px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 18px 30px rgba(0, 0, 0, .4), 0 3px 6px rgba(0, 0, 0, .3);
+  transform: rotate(-.4deg);
+}
+.ficha-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; height: 44px; }
+.ficha h2 { font: 400 26px/1 var(--f-plate); letter-spacing: .02em; }
+.ficha-no { font: 600 13px/1 var(--f-cond); letter-spacing: .14em; text-transform: uppercase; color: var(--card-muted); }
+
+.ficha form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 18px; margin-top: 18px; }
+.field { display: flex; flex-direction: column; justify-content: flex-end; min-height: 72px; min-width: 0; grid-column: span 2; }
+.field.half { grid-column: span 1; }
+.field label, .field .lbl { font: 600 12.5px/1 var(--f-cond); letter-spacing: .14em; text-transform: uppercase; color: var(--card-muted); margin-bottom: 6px; }
+.field input, .field select {
+  width: 100%; min-width: 0; height: 38px; padding: 0 2px; border: 0; border-bottom: 1.5px solid #6d87a0; border-radius: 0;
+  background: transparent; color: #17306b; font: 500 19px/1 var(--f-body); caret-color: var(--vinho);
+  appearance: none; -webkit-appearance: none;
+}
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%234c5a53' stroke-width='1.6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 4px center; }
+.field input::placeholder { color: #5b6b7a; }
+.field input::-webkit-datetime-edit { color: #17306b; }
+.field input::-webkit-calendar-picker-indicator {
+  width: 18px; height: 18px; cursor: pointer; opacity: .85;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317306b' stroke-width='1.7' stroke-linecap='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='2'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E") center / 18px no-repeat;
+}
+.field input:focus, .field select:focus { outline: none; border-bottom-color: var(--vinho); box-shadow: 0 1.5px 0 var(--vinho); }
+.field input[aria-invalid="true"] { border-bottom-color: var(--error); }
+.picked { min-height: 38px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1.5px solid #6d87a0; }
+.picked .empty { color: #4f5d6a; font-size: 16px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px; border-radius: 3px;
+  font: 600 14px/1 var(--f-cond); letter-spacing: .05em; text-transform: uppercase; color: #fff;
+  background: var(--c, var(--vinho)); border: 0; cursor: pointer;
+}
+.chip svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; }
+.chip.light { color: var(--brass-ink); }
+.err { grid-column: span 2; min-height: 20px; margin-top: 6px; font-size: 14px; color: var(--error); }
+.ficha .btn { grid-column: span 2; margin-top: 14px; width: 100%; }
+.ficha-note { grid-column: span 2; margin-top: 10px; font-size: 14px; color: var(--card-muted); text-align: center; }
+
+/* Carimbo */
+.stamp {
+  position: absolute; right: 14px; top: 70px; width: 92px; height: 92px; pointer-events: none;
+  color: var(--vinho); opacity: 0; transform: rotate(-14deg) scale(1.6);
+  transition: opacity .25s, transform .35s var(--ease-out);
+}
+.ficha.ok .stamp { opacity: .78; transform: rotate(-14deg) scale(1); }
+
+/* ---------- Seções na parede ---------- */
+section.wall { padding: 88px 0; border-top: 1px solid rgba(241, 218, 146, .16); }
+.sec-title { font-size: clamp(30px, 5.4vw, 46px); max-width: 20ch; }
+.sec-lead { margin-top: 14px; max-width: 54ch; color: var(--felt-muted); }
+
+/* Quadro de avisos (letras de encaixe) */
+.avisos-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 36px; align-items: start; }
+.letterboard {
+  position: relative; padding: 26px 22px 30px; border-radius: 4px;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 7px) padding-box,
+    linear-gradient(var(--board), var(--board)) padding-box,
+    var(--walnut-tex) border-box,
+    linear-gradient(180deg, #6a4128, #4a2b1a 50%, #351e13) border-box;
+  background-size: auto, auto, 600px 240px, auto;
+  border: 10px solid transparent;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, .4);
+}
+.letterboard p {
+  font: 600 clamp(17px, 4.4vw, 22px)/1 var(--f-cond); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--letter); text-align: center; padding: 9px 0; text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
+}
+.letterboard p + p { border-top: 0; }
+.letterboard .head { color: var(--brass-hi); letter-spacing: .24em; font-size: clamp(15px, 3.6vw, 18px); padding-bottom: 16px; }
+
+.faq details { border-bottom: 1px solid rgba(241, 218, 146, .22); }
+.faq summary {
+  cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 18px;
+  padding: 20px 0; font: 400 21px/1.3 var(--f-head); color: var(--felt-ink);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary svg { width: 18px; height: 18px; flex: none; stroke: var(--brass-hi); stroke-width: 1.8; fill: none; transition: transform .3s var(--ease-out); }
+.faq details[open] summary svg { transform: rotate(45deg); }
+.faq summary:hover { color: var(--brass-hi); }
+.faq details p { padding: 0 0 22px; max-width: 62ch; color: var(--felt-muted); }
+
+/* Avaliações */
+.reviews-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 40px; }
+.reviews-head .rating { margin-top: 0; }
+/* Recados dos tutores: fichas de papel presas no feltro com tachinha de latão */
+.quotes { display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 44px; }
+.quote {
+  position: relative; margin: 0; padding: 30px 24px 22px; color: var(--card-ink);
+  background: linear-gradient(180deg, transparent 0 18px, var(--rule-red) 18px 19.5px, transparent 19.5px), var(--card);
+  border-radius: 2px; box-shadow: 0 14px 24px rgba(0, 0, 0, .38), 0 2px 4px rgba(0, 0, 0, .25);
+  transform: rotate(var(--r, -1deg));
+}
+.quote::before {
+  content: ""; position: absolute; top: -7px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #fff3c4 0, #d9b45e 35%, #7c591b 80%);
+  box-shadow: 0 4px 5px rgba(0, 0, 0, .45);
+}
+.quote p { font: 400 clamp(20px, 4.2vw, 22px)/1.4 var(--f-head); max-width: 34ch; }
+.quote footer { margin-top: 16px; font: 600 14px/1 var(--f-cond); letter-spacing: .12em; text-transform: uppercase; color: var(--vinho); }
+.demo-note { margin-top: 22px; font-size: 14px; color: var(--felt-muted); }
+
+/* Fotos (só aparecem quando há URLs) */
+.mural { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 36px; }
+.mural figure { margin: 0; padding: 8px 8px 26px; background: var(--card); box-shadow: 0 12px 22px rgba(0, 0, 0, .4); transform: rotate(var(--r, -1.5deg)); position: relative; }
+.mural figure::before { content: ""; position: absolute; top: -6px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff3c4, #8a6420 70%); box-shadow: 0 3px 4px rgba(0, 0, 0, .4); }
+.mural img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+
+/* Endereço */
+.loc { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 36px; }
+.loc-list { display: grid; gap: 22px; align-content: start; }
+.loc-row { display: grid; grid-template-columns: 28px 1fr; gap: 12px; }
+.loc-row .ico { color: var(--brass-hi); margin-top: 3px; }
+.loc-row b { display: block; font: 600 13px/1.2 var(--f-cond); letter-spacing: .14em; text-transform: uppercase; color: var(--brass-hi); margin-bottom: 4px; }
+.loc-row span, .loc-row a { font-size: 18px; color: var(--felt-ink); }
+.map { border-radius: 4px; overflow: hidden; padding: 6px; background: linear-gradient(180deg, var(--brass-hi), var(--brass) 50%, var(--brass-lo)); box-shadow: 0 16px 30px rgba(0, 0, 0, .4); }
+.map iframe { display: block; width: 100%; height: 340px; border: 0; filter: saturate(.85); }
+
+/* Fecho com carimbo */
+.close { padding: 96px 0 120px; border-top: 1px solid rgba(241, 218, 146, .16); text-align: center; }
+.close .seal { display: block; width: 160px; height: 160px; margin: 0 auto 32px; overflow: visible; transform: rotate(-8deg); }
+.close h2 { font-size: clamp(32px, 6vw, 54px); max-width: 18ch; margin: 0 auto; }
+.close p { margin: 16px auto 30px; max-width: 46ch; color: var(--felt-muted); }
+
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 26px 0 110px; border-top: 1px solid rgba(241, 218, 146, .16); font-size: 14px; color: var(--felt-muted); }
+.foot a { color: var(--felt-muted); }
+.foot a:hover { color: var(--brass-hi); }
+
+/* ---------- Barra fixa do balcão (celular) ---------- */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--walnut-tex), linear-gradient(180deg, #7a4d30, #57331f 30%, #3a2216);
+  background-size: 600px 240px, auto;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 220, 180, .25);
+  transform: translateY(0); transition: transform .4s var(--ease-out);
+}
+.dock.hide { transform: translateY(110%); }
+.dock-info { flex: 1; min-width: 0; font: 600 14px/1.2 var(--f-cond); letter-spacing: .08em; text-transform: uppercase; color: #f0dcc4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock-info span { color: var(--brass-hi); }
+.dock .btn { min-height: 46px; padding: 0 18px; font-size: 15px; flex: none; }
+
+/* ---------- Telas maiores ---------- */
+@media (min-width: 720px) {
+  .board { grid-template-columns: repeat(6, 1fr); gap: 0 14px; }
+  .board.row2::after { display: none; }
+  .fob { width: 70px; height: 142px; }
+  .quotes { grid-template-columns: repeat(3, 1fr); gap: 0 32px; align-items: start; }
+  .quote:nth-child(2) { margin-top: 26px; }
+  .mural { grid-template-columns: repeat(4, 1fr); }
+  .ficha { padding: 22px 34px 32px; }
+}
+@media (min-width: 960px) {
+  .hero { padding-top: 40px; }
+  .hero-top { display: grid; grid-template-columns: auto 1fr; gap: 20px 56px; align-items: center; }
+  .lede { margin-top: 0; }
+  .hero-copy { padding-bottom: 6px; }
+  .avisos-grid { grid-template-columns: 5fr 6fr; gap: 64px; }
+  .loc { grid-template-columns: 5fr 7fr; gap: 56px; }
+  .map iframe { height: 400px; }
+  .dock { display: none; }
+  .foot { padding-bottom: 32px; }
+}
+@media (max-width: 719px) {
+  .top nav { display: none; }
+  .letterboard { padding: 22px 12px 26px; }
+  .letterboard p { font-size: 16px; letter-spacing: .07em; }
+  .label b { font-size: 14px; }
+  .label small { font-size: 12px; }
+  .label em { font-size: 13px; letter-spacing: 0; }
+  .lede-sub { display: none; }
+  .board-wrap { margin-top: 22px; }
+  .previa .long { display: none; }
+}
+.plate-sub .nw { white-space: nowrap; }
+@media (max-width: 380px) {
+  .board-hint { font-size: 11.5px; letter-spacing: .04em; padding: 6px 10px 5px; margin-bottom: 14px; }
+  .rating { margin-top: 16px; }
+  .lede { margin-top: 22px; }
+  .board { gap: 8px 6px; }
+  .label { padding: 7px 4px 8px; }
+  .plate { padding: 16px 28px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .slot.taken .fob { opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="previa" id="previa" hidden></div>
+
+<header class="wrap top">
+  <a href="#topo" class="top-name" data-c="nome"></a>
+  <nav aria-label="Seções">
+    <a href="#quartos">Serviços</a>
+    <a href="#avisos">Avisos</a>
+    <a href="#avaliacoes">Avaliações</a>
+    <a href="#endereco">Endereço</a>
+  </nav>
+  <a class="btn btn-small js-whats" data-msg="Olá! Vim pelo site e queria saber sobre vagas.">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp
+  </a>
+</header>
+
+<main id="topo">
+
+  <section class="hero" aria-labelledby="nome-hotel">
+    <div class="wrap">
+      <div class="hero-top">
+        <div class="plate">
+          <h1 id="nome-hotel" data-c="nome"></h1>
+          <span class="plate-sub">Hotel e creche para pets <span class="nw">· <span data-c="bairro"></span>, <span data-c="cidade"></span></span></span>
+        </div>
+        <div class="hero-copy">
+          <p class="lede">Viaje tranquilo. A chave do quarto dele fica com a gente.</p>
+          <p class="lede-sub">Hospedagem, creche e banho para cães e gatos, com fotos todos os dias no seu WhatsApp.</p>
+          <div class="rating" id="rating">
+            <span class="digits" id="digits" aria-hidden="true"></span>
+            <span><b>no Google</b> · <span data-c="totalAvaliacoes"></span> avaliações de tutores</span>
+            <span class="sr">Nota <span data-c="notaGoogle"></span> no Google</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="board-wrap" id="quartos">
+        <p class="board-hint" id="board-hint">Toque num chaveiro para escolher o serviço</p>
+        <div class="board" id="board" role="group" aria-labelledby="board-hint"></div>
+      </div>
+    </div>
+
+    <div class="counter" id="checkin">
+      <div class="wrap">
+        <div class="ficha" id="ficha">
+          <div class="ficha-head">
+            <h2>Ficha de check-in</h2>
+            <span class="ficha-no">Nº <span id="ficha-no"></span></span>
+          </div>
+          <form id="form" novalidate>
+            <div class="field">
+              <span class="lbl" id="lbl-servico">Serviço escolhido</span>
+              <div class="picked" id="picked" aria-labelledby="lbl-servico" aria-live="polite"></div>
+            </div>
+            <div class="field half">
+              <label for="pet">Nome do pet</label>
+              <input id="pet" name="pet" autocomplete="off" placeholder="Ex.: Thor">
+            </div>
+            <div class="field half">
+              <label for="porte">Porte</label>
+              <select id="porte" name="porte">
+                <option value="">Selecione</option>
+                <option>Cão pequeno (até 10 kg)</option>
+                <option>Cão médio (10 a 25 kg)</option>
+                <option>Cão grande (acima de 25 kg)</option>
+                <option>Gato</option>
+              </select>
+            </div>
+            <div class="field half">
+              <label for="entrada">Entrada</label>
+              <input id="entrada" name="entrada" type="date">
+            </div>
+            <div class="field half">
+              <label for="saida">Saída</label>
+              <input id="saida" name="saida" type="date" aria-describedby="err">
+            </div>
+            <p class="err" id="err" role="alert"></p>
+            <button class="btn" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>Pedir vaga no WhatsApp
+            </button>
+            <p class="ficha-note">A ficha vira uma mensagem pronta. Nada é enviado sem você apertar enviar no WhatsApp.</p>
+          </form>
+          <svg class="stamp" viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="3"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="50" y="47" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="15" fill="currentColor" letter-spacing="1.5">PEDIDO</text>
+            <text x="50" y="64" text-anchor="middle" font-family="Barlow Condensed" font-weight="700" font-size="13" fill="currentColor" letter-spacing="1.5">ENVIADO</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wall" id="avisos" aria-labelledby="t-avisos">
+    <div class="wrap">
+      <h2 class="sec-title" id="t-avisos">Antes de deixar seu pet com a gente</h2>
+      <div class="avisos-grid">
+        <div class="letterboard" id="letterboard"></div>
+        <div class="faq" id="faq"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wall" id="fotos-sec" aria-labelledby="t-fotos" hidden>
+    <div class="wrap">
+      <h2 class="sec-title" id="t-fotos">Os hóspedes da semana</h2>
+      <div class="mural" id="mural"></div>
+    </div>
+  </section>
+
+  <section class="wall" id="avaliacoes" aria-labelledby="t-aval">
+    <div class="wrap">
+      <div class="reviews-head">
+        <h2 class="sec-title" id="t-aval">O que os tutores contam na volta</h2>
+        <div class="rating" id="rating2"></div>
+      </div>
+      <div class="quotes" id="quotes"></div>
+      <p class="demo-note" id="demo-note" hidden>Depoimentos de exemplo. Na versão final, entram as avaliações reais do Google.</p>
+    </div>
+  </section>
+
+  <section class="wall" id="endereco" aria-labelledby="t-end">
+    <div class="wrap">
+      <h2 class="sec-title" id="t-end">Venha conhecer a recepção</h2>
+      <div class="loc">
+        <div class="loc-list">
+          <div class="loc-row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><b>Endereço</b><span data-c="endereco"></span></div></div>
+          <div class="loc-row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Horário</b><span data-c="horario"></span></div></div>
+          <div class="loc-row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg><div><b>WhatsApp</b><a class="js-whats" data-msg="Olá! Vim pelo site." data-c="telefoneExibicao"></a></div></div>
+          <div class="loc-row" id="insta-row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg><div><b>Instagram</b><a id="insta" target="_blank" rel="noopener"></a></div></div>
+        </div>
+        <div class="map" id="map"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" aria-labelledby="t-close">
+    <div class="wrap">
+      <svg class="seal" viewBox="0 0 200 200" aria-hidden="true">
+        <defs><path id="seal-arc" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
+        <!-- medalhão de latão cunhado -->
+        <circle cx="102" cy="104" r="96" fill="#000" opacity=".35"/>
+        <circle cx="100" cy="100" r="96" fill="url(#medal)" stroke="#6b4c15" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="#6b4c15" stroke-opacity=".7" stroke-width="1"/>
+        <circle cx="100" cy="100" r="58" fill="none" stroke="#3a2a0b" stroke-opacity=".75" stroke-width="1.5"/>
+        <circle cx="100" cy="101" r="58" fill="none" stroke="#fff3c4" stroke-opacity=".5" stroke-width="1"/>
+        <text font-family="Barlow Condensed" font-weight="700" font-size="17" letter-spacing="4" fill="#2b1e06"><textPath href="#seal-arc" id="seal-text"></textPath></text>
+        <text id="seal-year" x="100" y="96" text-anchor="middle" font-family="Marcellus SC" font-size="16" fill="#2b1e06"></text>
+        <text id="seal-year2" x="100" y="123" text-anchor="middle" font-family="Marcellus SC" font-size="27" fill="#2b1e06"></text>
+      </svg>
+      <h2 id="t-close">Vai viajar? Garanta a vaga antes do feriado.</h2>
+      <p>Datas de férias e feriados lotam rápido. Escolha o serviço e mande a ficha que a gente responde com a disponibilidade.</p>
+      <a class="btn" href="#quartos">Escolher no quadro de chaves</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap foot">
+  <span>© <span id="ano"></span> <span data-c="nome"></span> · <span data-c="cidade"></span></span>
+  <a id="credito" target="_blank" rel="noopener"></a>
+</footer>
+
+<div class="dock" id="dock">
+  <p class="dock-info" id="dock-info"></p>
+  <a class="btn" href="#checkin" id="dock-btn">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>Pedir vaga
+  </a>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- baquelite: mescla de resina com manchas suaves -->
+    <filter id="bakelite" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".09 .05" numOctaves="3" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1.6 0 -.55"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <filter id="bakelite-lt" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".09 .05" numOctaves="3" seed="11"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 .92  0 0 0 0 .82  0 0 1.8 0 -.75"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <!-- número estampado a quente em dourado -->
+    <linearGradient id="stamp" x1="0" x2="0" y1="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f6e3a1"/><stop offset=".55" stop-color="#d9b45e"/><stop offset="1" stop-color="#a87d2a"/>
+    </linearGradient>
+    <radialGradient id="medal" cx=".38" cy=".32" r=".8">
+      <stop offset="0" stop-color="#f6e3a1"/><stop offset=".5" stop-color="#d4ad57"/><stop offset="1" stop-color="#8a6420"/>
+    </radialGradient>
+    <clipPath id="fobclip"><path d="M30 20 L54 66 Q56 70 53 74 L33 116 Q30 121 27 116 L7 74 Q4 70 6 66 Z"/></clipPath>
+  </defs>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.4Z"/></symbol>
+</svg>
+
+<script>
+(function () {
+  const C = CONFIG;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+  const waLink = (num, msg) => "https://wa.me/" + String(num).replace(/\D/g, "") + "?text=" + encodeURIComponent(msg);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Cores dos chaveiros: [corpo, número estampado, contorno]
+  const CORES = {
+    vinho:    ["#8b2b22", "#efcf7a", "#5e1b15"],
+    preto:    ["#1c1b19", "#e3c26a", "#000000"],
+    marfim:   ["#e8ddc4", "#7c591b", "#b9ab8c"],
+    mostarda: ["#c4951f", "#3a2a0b", "#8a6712"],
+    marinho:  ["#20375a", "#e9cd78", "#13223a"]
+  };
+
+  document.title = `${C.nome} · Hotel e creche para pets em ${C.cidade}`;
+  document.querySelectorAll("[data-c]").forEach(el => { el.textContent = C[el.dataset.c] ?? ""; });
+  document.querySelectorAll(".js-whats").forEach(a => {
+    a.href = waLink(C.whatsapp, a.dataset.msg || "Olá!");
+    a.target = "_blank"; a.rel = "noopener";
+  });
+
+  // Nota em algarismos de latão
+  const digitsHTML = String(C.notaGoogle).split("").map(ch =>
+    ch === "," || ch === "." ? `<span class="comma">${esc(ch)}</span>` : `<span>${esc(ch)}</span>`).join("");
+  $("digits").innerHTML = digitsHTML;
+  $("rating2").innerHTML = `<span class="digits" aria-hidden="true">${digitsHTML}</span><span><b>no Google</b> · ${esc(C.totalAvaliacoes)} avaliações</span>`;
+
+  // ---------- Quadro de chaves ----------
+  const hookSVG = `<svg class="hook" viewBox="0 0 22 26" aria-hidden="true">
+      <defs><linearGradient id="hk" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f1da92"/><stop offset=".6" stop-color="#c99c3e"/><stop offset="1" stop-color="#7c591b"/></linearGradient></defs>
+      <circle cx="11" cy="7" r="6" fill="url(#hk)" stroke="#5f4412" stroke-width=".8"/>
+      <circle cx="11" cy="7" r="1.6" fill="#5f4412"/>
+      <path d="M11 12v6a4 4 0 0 0 4 4" fill="none" stroke="url(#hk)" stroke-width="2.6" stroke-linecap="round"/>
+    </svg>`;
+
+  const fobSVG = (s, i) => {
+    const [body, ink, edge] = CORES[s.cor] || CORES.vinho;
+    const light = s.cor === "marfim" || s.cor === "mostarda";
+    return `<svg viewBox="0 0 60 122" aria-hidden="true">
+      <defs>
+        <linearGradient id="sh${i}" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
+      </defs>
+      <circle cx="30" cy="9" r="7.5" fill="none" stroke="#c99c3e" stroke-width="2.4"/>
+      <circle cx="30" cy="9" r="7.5" fill="none" stroke="#f1da92" stroke-width=".8" stroke-dasharray="6 30"/>
+      <path d="M30 20 L54 66 Q56 70 53 74 L33 116 Q30 121 27 116 L7 74 Q4 70 6 66 Z" transform="translate(1.6 2.4)" fill="${edge}"/>
+      <path d="M30 20 L54 66 Q56 70 53 74 L33 116 Q30 121 27 116 L7 74 Q4 70 6 66 Z" fill="${body}" stroke="${edge}" stroke-width="1.4" stroke-linejoin="round"/>
+      <rect x="0" y="18" width="60" height="104" fill="${body}" filter="url(#${light ? "bakelite" : "bakelite-lt"})" clip-path="url(#fobclip)" opacity="${light ? ".32" : ".5"}"/>
+      <path d="M30 20 L54 66 Q56 70 53 74 L33 116 Q30 121 27 116 L7 74 Q4 70 6 66 Z" fill="url(#sh${i})"/>
+      <path d="M30 20 L54 66 Q56 70 53 74 L33 116 Q30 121 27 116 L7 74 Q4 70 6 66 Z" transform="translate(30 68) scale(.84) translate(-30 -68)" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M28.5 24 L8.5 65" stroke="#fff" stroke-opacity=".5" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M8.5 75 L27 112" stroke="#000" stroke-opacity=".3" stroke-width="1.3" stroke-linecap="round"/>
+      <circle cx="30" cy="30" r="3.6" fill="#0d1f17" stroke="${edge}" stroke-width="1"/>
+      <path d="M30 17v9" stroke="#c99c3e" stroke-width="2.4" stroke-linecap="round"/>
+      <text x="30" y="78" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="20" letter-spacing="1" fill="${light ? "rgba(255,255,255,.35)" : "rgba(0,0,0,.55)"}">${esc(s.numero)}</text>
+      <text x="30" y="77" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="600" font-size="20" letter-spacing="1" fill="${light ? ink : "url(#stamp)"}">${esc(s.numero)}</text>
+      <path d="M17 88h26" stroke="${light ? ink : "url(#stamp)"}" stroke-width=".9" opacity=".8"/>
+    </svg>`;
+  };
+
+  const board = $("board");
+  board.classList.toggle("row2", C.servicos.length > 3);
+  board.innerHTML = C.servicos.map((s, i) => `
+    <button type="button" class="slot settle" style="--i:${i}" data-i="${i}" aria-pressed="false">
+      ${hookSVG}
+      <span class="reserved" aria-hidden="true">Reservado</span>
+      <span class="fob">${fobSVG(s, i)}</span>
+      <span class="label"><b>${esc(s.titulo)}</b><small>${esc(s.detalhe)}</small><em>${esc(s.preco)}</em></span>
+    </button>`).join("");
+
+  const chosen = new Set();
+  const slots = [...board.querySelectorAll(".slot")];
+
+  function label(s) { return s.detalhe ? `${s.titulo} (${s.detalhe})` : s.titulo; }
+
+  function renderPicked() {
+    const picked = $("picked");
+    if (!chosen.size) {
+      picked.innerHTML = `<span class="empty">Escolha um chaveiro no quadro acima</span>`;
+    } else {
+      picked.innerHTML = [...chosen].map(i => {
+        const s = C.servicos[i];
+        const [body] = CORES[s.cor] || CORES.vinho;
+        const light = s.cor === "marfim" || s.cor === "mostarda";
+        return `<button type="button" class="chip${light ? " light" : ""}" style="--c:${body}" data-rm="${i}" aria-label="Remover ${esc(label(s))}">${esc(s.numero)} · ${esc(s.titulo)}<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>`;
+      }).join("");
+    }
+    const n = chosen.size;
+    $("dock-info").innerHTML = n
+      ? `<span>${n === 1 ? "1 serviço" : n + " serviços"}</span> · ${esc([...chosen].map(i => C.servicos[i].titulo).join(", "))}`
+      : `Escolha um chaveiro`;
+  }
+
+  function toggle(i) {
+    const slot = slots[i];
+    if (chosen.has(i)) {
+      chosen.delete(i);
+      slot.classList.remove("taken");
+      slot.setAttribute("aria-pressed", "false");
+    } else {
+      chosen.add(i);
+      slot.classList.remove("settle");
+      slot.classList.add("taken");
+      slot.setAttribute("aria-pressed", "true");
+    }
+    $("ficha").classList.remove("ok");
+    renderPicked();
+  }
+
+  slots.forEach(slot => {
+    slot.setAttribute("aria-label", `${label(C.servicos[slot.dataset.i])}, ${C.servicos[slot.dataset.i].preco}`);
+    slot.addEventListener("click", () => toggle(+slot.dataset.i));
+  });
+  $("picked").addEventListener("click", e => {
+    const b = e.target.closest("[data-rm]");
+    if (b) toggle(+b.dataset.rm);
+  });
+  if (reduce) slots.forEach(s => s.classList.remove("settle"));
+  // ?escolher=1,5 já abre com esses chaveiros tirados do gancho (1 = primeiro)
+  (new URLSearchParams(location.search).get("escolher") || "").split(",").map(n => parseInt(n, 10) - 1)
+    .filter(i => slots[i] && !chosen.has(i)).forEach(toggle);
+  renderPicked();
+
+  // ---------- Ficha de check-in ----------
+  const pad = n => String(n).padStart(2, "0");
+  const hoje = new Date();
+  const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  $("entrada").min = iso(hoje);
+  $("saida").min = iso(hoje);
+  $("ficha-no").textContent = `${pad(hoje.getDate())}${pad(hoje.getMonth() + 1)}-${String(Math.floor(Math.random() * 900) + 100)}`;
+  const br = v => v ? v.split("-").reverse().slice(0, 2).join("/") : "";
+
+  $("entrada").addEventListener("change", () => {
+    $("saida").min = $("entrada").value || iso(hoje);
+    validate();
+  });
+  $("saida").addEventListener("change", validate);
+
+  function validate() {
+    const e = $("entrada").value, s = $("saida").value;
+    const bad = e && s && s < e;
+    $("saida").setAttribute("aria-invalid", bad ? "true" : "false");
+    $("err").textContent = bad ? "A saída precisa ser no mesmo dia ou depois da entrada." : "";
+    return !bad;
+  }
+
+  function mensagem() {
+    const linhas = [`Olá! Vim pelo site do ${C.nome} e quero pedir uma vaga.`];
+    if (chosen.size) linhas.push("Serviço: " + [...chosen].map(i => label(C.servicos[i])).join(", "));
+    const pet = $("pet").value.trim(), porte = $("porte").value;
+    if (pet || porte) linhas.push("Pet: " + [pet, porte].filter(Boolean).join(", "));
+    const e = br($("entrada").value), s = br($("saida").value);
+    if (e || s) linhas.push("Datas: " + (e ? "entrada " + e : "") + (e && s ? ", " : "") + (s ? "saída " + s : ""));
+    return linhas.join("\n");
+  }
+
+  $("form").addEventListener("submit", ev => {
+    ev.preventDefault();
+    if (!validate()) { $("saida").focus(); return; }
+    $("ficha").classList.add("ok");
+    window.open(waLink(C.whatsapp, mensagem()), "_blank", "noopener");
+  });
+
+  // Barra do balcão: some quando a ficha está na tela
+  const dock = $("dock");
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([en]) => dock.classList.toggle("hide", en.isIntersecting), { threshold: .25 }).observe($("ficha"));
+  }
+
+  // ---------- Quadro de avisos + dúvidas ----------
+  $("letterboard").innerHTML = `<p class="head">Avisos da recepção</p>` + C.avisos.map(a => `<p>${esc(a)}</p>`).join("");
+  const plus = `<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2v14M2 9h14"/></svg>`;
+  $("faq").innerHTML = C.faq.map(f => `<details><summary>${esc(f.p)}${plus}</summary><p>${esc(f.r)}</p></details>`).join("");
+
+  // ---------- Fotos ----------
+  const fotos = (C.fotos || []).filter(Boolean);
+  if (fotos.length) {
+    $("fotos-sec").hidden = false;
+    const rot = ["-1.8deg", "1.2deg", "-.6deg", "2deg"];
+    $("mural").innerHTML = fotos.slice(0, 8).map((u, i) =>
+      `<figure style="--r:${rot[i % 4]}"><img src="${esc(u)}" alt="Foto do ${esc(C.nome)}" loading="lazy"></figure>`).join("");
+  }
+
+  // ---------- Avaliações ----------
+  const giro = ["-1.2deg", ".8deg", "-.4deg"];
+  $("quotes").innerHTML = C.depoimentos.map((d, i) => `
+    <blockquote class="quote" style="--r:${giro[i % 3]}"><p>“${esc(d.texto)}”</p><footer>${esc(d.nome)}</footer></blockquote>`).join("");
+  $("demo-note").hidden = !C.depoimentosExemplo;
+
+  // ---------- Endereço ----------
+  $("map").innerHTML = `<iframe loading="lazy" title="Mapa até o ${esc(C.nome)}" src="https://maps.google.com/maps?q=${encodeURIComponent(C.endereco)}&output=embed"></iframe>`;
+  if (C.instagram) { $("insta").href = "https://instagram.com/" + C.instagram; $("insta").textContent = "@" + C.instagram; }
+  else $("insta-row").remove();
+
+  // ---------- Carimbo de fecho ----------
+  const desde = hoje.getFullYear() - (parseInt(C.anos, 10) || 0);
+  // A volta do selo tem ~455px: nomes longos reduzem a letra em vez de sobrepor
+  const selo = `${C.nome} · ${C.cidade} · `.toUpperCase();
+  const fs = Math.max(9, Math.min(17, (455 / selo.length - 2) / 0.52));
+  const sealTxt = $("seal-text").parentNode;
+  sealTxt.setAttribute("font-size", fs.toFixed(1));
+  sealTxt.setAttribute("letter-spacing", "2");
+  $("seal-text").textContent = selo;
+  if (selo.length * (fs * 0.52 + 2) < 455) { sealTxt.setAttribute("textLength", "455"); sealTxt.setAttribute("lengthAdjust", "spacing"); }
+  $("seal-year").textContent = C.anos ? "desde" : "";
+  $("seal-year2").textContent = C.anos ? desde : "";
+
+  $("ano").textContent = hoje.getFullYear();
+  $("credito").textContent = "Site feito por " + C.feitoPor;
+  $("credito").href = "https://wa.me/" + C.feitoPorWhats;
+
+  if (C.mostrarAvisoPrevia) {
+    $("previa").hidden = false;
+    $("previa").innerHTML = `Prévia de exemplo<span class="long"> criada por ${esc(C.feitoPor)} para o ${esc(C.nome)}. Preços e textos são exemplos</span>. <a href="${waLink(C.feitoPorWhats, "Olá, Mateus! Vi a prévia do site do " + C.nome + ".")}" target="_blank" rel="noopener">Quero esse site</a>`;
+  }
+})();
+</script>
+</body>
+</html>
